@@ -1,0 +1,117 @@
+/* The store: upgrade tiles, the buy-amount toggle and the bird cards. */
+.store {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--surface);
+}
+.store-title {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: 0;
+  padding: 10px 14px;
+  border-bottom: 2px solid var(--ink);
+  background: var(--surface);
+  font-size: 24px;
+  font-weight: 700;
+}
+.store-section { padding: 12px 12px 4px; }
+.section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 8px;
+  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.section-head .section-label { margin: 0; }
+
+/* Upgrade tiles */
+.upgrade-grid { display: flex; flex-wrap: wrap; gap: 6px; min-height: 56px; }
+.upgrade-grid:empty::before { content: attr(data-empty); align-self: center; color: var(--muted); font-size: 13px; }
+.upgrade-tile {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  background: var(--raised);
+  box-shadow: var(--bevel);
+  cursor: pointer;
+  opacity: 0.45;
+}
+.upgrade-tile.affordable { opacity: 1; animation: glint 2.4s steps(1) infinite; }
+.upgrade-tile:hover { background: var(--raised-hover); opacity: 1; }
+.upgrade-tile:active { box-shadow: var(--pressed); }
+#feather-grid .upgrade-tile { background: #22385f; }
+#feather-grid .upgrade-tile:hover { background: #2c4774; }
+.upgrade-tile.purchased { opacity: 1; cursor: default; }
+.upgrade-tile.purchased::after {
+  content: "";
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 8px;
+  height: 8px;
+  background: var(--green);
+  box-shadow: 0 0 0 2px var(--ink);
+}
+.upgrade-ghost { position: fixed; z-index: 60; margin: 0; pointer-events: none; }
+@keyframes glint {
+  0%, 85% { border-color: var(--ink); }
+  86%, 100% { border-color: var(--gold); }
+}
+
+/* Buy ×1 / ×10 / ×100 */
+.buy-toggle { display: flex; border: 2px solid var(--ink); }
+.buy-toggle button {
+  min-width: 46px;
+  padding: 3px 8px;
+  border: 0;
+  border-left: 2px solid var(--ink);
+  background: var(--raised);
+  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.buy-toggle button:first-child { border-left: 0; }
+.buy-toggle button:hover { color: var(--text); }
+.buy-toggle button[aria-pressed="true"] { background: var(--royal); color: #fff; }
+
+/* Bird cards */
+.bird-list { display: grid; gap: 6px; padding-bottom: 12px; }
+.store-item {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 64px;
+  padding: 6px 12px 6px 6px;
+  border: 2px solid var(--ink);
+  background: var(--raised);
+  box-shadow: var(--bevel);
+  text-align: left;
+  cursor: pointer;
+}
+.store-item:hover { background: var(--raised-hover); }
+.store-item:active { box-shadow: var(--pressed); }
+.store-item[aria-disabled="true"] { cursor: default; }
+.store-item[aria-disabled="true"] .item-icon,
+.store-item[aria-disabled="true"] .item-name { opacity: 0.55; }
+.item-icon { display: grid; place-items: center; width: 64px; height: 52px; }
+.item-name { display: block; font-size: 17px; font-weight: 600; line-height: 1.15; }
+.item-price { display: flex; align-items: center; gap: 4px; margin-top: 2px; color: var(--orange); font-size: 14px; font-weight: 600; }
+.store-item.affordable .item-price { color: var(--green); }
+.item-owned { color: rgb(255 255 255 / 0.22); font-size: 30px; font-weight: 700; }
+.store-item.teaser .item-icon img { filter: brightness(0); opacity: 0.5; }
+.store-item.teaser .item-name { color: var(--text-dim); letter-spacing: 0.2em; }

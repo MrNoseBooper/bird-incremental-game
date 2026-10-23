@@ -1,0 +1,67 @@
+/* The aviary: menu bar with the news ticker, the pixel-art habitat strips, and the Stats/Options panel. */
+.aviary-panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  border-inline: 2px solid var(--ink);
+  background: var(--bg);
+}
+
+.panel-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-bottom: 2px solid var(--ink);
+  background: var(--surface);
+}
+.ticker {
+  flex: 1;
+  min-width: 0;
+  height: 2.8em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: var(--text-dim);
+  font-size: 14px;
+  text-align: center;
+}
+
+.aviary-body { position: relative; flex: 1; min-height: 0; }
+.aviary { height: 100%; overflow-x: hidden; overflow-y: auto; }
+.aviary-stage { position: relative; }
+.aviary-labels { position: absolute; inset: 0; pointer-events: none; }
+.habitat-label {
+  position: absolute;
+  left: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 1px 8px 2px;
+  background: rgb(13 14 23 / 0.75);
+  font-size: 13px;
+}
+.habitat-label b { font-weight: 600; }
+.habitat-label .count { color: var(--gold); }
+.habitat-label .where { color: var(--text-dim); }
+.habitat-label.resting::after { content: "· resting"; color: #b8c8ff; }
+.aviary-empty { display: none; margin: 48px 24px; color: var(--text-dim); text-align: center; }
+.aviary.is-empty .aviary-empty { display: block; }
+
+/* Stats and Options open over the aviary */
+.menu-panel {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  padding: 20px 26px;
+  overflow-y: auto;
+  background: rgb(26 28 44 / 0.97);
+}
+.menu-panel h2 { margin: 0 0 16px; font-size: 26px; font-weight: 700; }
+.menu-panel p { color: var(--text-dim); }
+.menu-close { position: absolute; top: 12px; right: 14px; padding: 2px 10px; font-size: 18px; }
+.stats { display: grid; grid-template-columns: auto 1fr; gap: 8px 24px; margin: 0; }
+.stats dt { color: var(--text-dim); }
+.stats dd { margin: 0; font-weight: 600; }

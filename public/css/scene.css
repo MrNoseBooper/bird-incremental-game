@@ -1,0 +1,110 @@
+/* The cove: one pixel-art canvas, invisible buttons over the sunflower and Kingfisher, and the counter card. */
+.cove {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  background: #3a7bd5;
+}
+.pixel-canvas { display: block; }
+.cove .pixel-canvas { position: absolute; left: 0; top: 0; }
+
+.hit {
+  position: absolute;
+  z-index: 2;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.hit:focus-visible { outline: 2px dashed var(--gold); outline-offset: 0; }
+#sunflower { border-radius: 50%; }
+
+.cove-card {
+  position: absolute;
+  z-index: 3;
+  top: 12px;
+  left: 50%;
+  width: min(300px, calc(100% - 24px));
+  padding: 8px 14px 12px;
+  translate: -50% 0;
+  border: 2px solid var(--ink);
+  background: rgb(26 28 44 / 0.85);
+  box-shadow: 0 4px 0 rgb(0 0 0 / 0.3), var(--bevel);
+  text-align: center;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.brand-logo img { display: block; }
+.seed-count {
+  margin-top: 2px;
+  color: #fff;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.1;
+  text-shadow: 2px 2px 0 var(--ink);
+}
+.seed-rate { color: var(--text-dim); font-size: 14px; }
+.cove-status { display: flex; justify-content: center; gap: 8px; margin-top: 8px; }
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px 4px 6px;
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  background: var(--raised);
+  box-shadow: var(--bevel);
+  font-size: 14px;
+}
+.clock-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: rgb(0 0 0 / 0.4); }
+#clock-fill { display: block; width: 0; height: 100%; background: var(--gold); }
+#clock-time { color: var(--text-dim); font-variant-numeric: tabular-nums; }
+
+/* "+N" when the sunflower is shaken: moves in pixel steps */
+.floater {
+  position: absolute;
+  z-index: 4;
+  translate: -50% -50%;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  text-shadow: 2px 2px 0 var(--ink);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: float-up 0.9s steps(9) forwards;
+}
+@keyframes float-up { to { transform: translateY(-64px); opacity: 0; } }
+
+.flying-feather {
+  position: fixed;
+  z-index: 60;
+  left: 0;
+  top: 0;
+  margin: -18px 0 0 -18px;
+  pointer-events: none;
+}
+
+.loading {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 24px;
+  background: var(--bg);
+  font-size: 20px;
+  text-align: center;
+}

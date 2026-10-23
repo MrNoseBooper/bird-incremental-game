@@ -1,0 +1,167 @@
+/* Fonts, palette, layout, buttons, tooltips and notes.
+   The look: square corners, flat colours, 2px borders, hard shadows, one pixel font. */
+@font-face {
+  font-family: "Pixelify Sans";
+  src: url("../fonts/PixelifySans-latin.woff2") format("woff2");
+  font-weight: 400 700;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Pixelify Sans";
+  src: url("../fonts/PixelifySans-latin-ext.woff2") format("woff2");
+  font-weight: 400 700;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* Palette based on Sweetie 16 */
+:root {
+  --ink: #0d0e17;
+  --bg: #1a1c2c;
+  --surface: #252a43;
+  --raised: #333c57;
+  --raised-hover: #3f4a6b;
+  --muted: #566c86;
+  --text: #f4f4f4;
+  --text-dim: #94b0c2;
+  --blue: #41a6f6;
+  --cyan: #73eff7;
+  --royal: #3b5dc9;
+  --gold: #ffcd75;
+  --orange: #ef7d57;
+  --green: #a7f070;
+  --font: "Pixelify Sans", ui-monospace, monospace;
+  --bevel: inset 0 2px 0 rgb(255 255 255 / 0.07), inset 0 -3px 0 rgb(0 0 0 / 0.25);
+  --pressed: inset 0 3px 0 rgb(0 0 0 / 0.3);
+  --drop: 4px 4px 0 rgb(0 0 0 / 0.35);
+  color-scheme: dark;
+  color: var(--text);
+  font: 400 15px/1.35 var(--font);
+  font-variant-ligatures: none; /* Pixelify Sans' fi/fl ligatures render as a stray glyph */
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.px, .px-icon, .pixel-canvas { image-rendering: pixelated; }
+.px-icon { flex: none; vertical-align: middle; }
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* The cove, the aviary and the store */
+.game {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(300px, 30%) minmax(0, 1fr) minmax(320px, 360px);
+}
+
+.px-button {
+  padding: 6px 14px;
+  border: 2px solid var(--ink);
+  background: var(--raised);
+  box-shadow: var(--bevel);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.px-button:hover { background: var(--raised-hover); }
+.px-button:active { box-shadow: var(--pressed); }
+.px-button[aria-pressed="true"] { background: var(--royal); }
+.px-button.danger { background: #b13e53; }
+.px-button.danger:hover { background: #c9505f; }
+
+/* Tooltip */
+.tooltip {
+  position: fixed;
+  z-index: 70;
+  max-width: 330px;
+  padding: 10px 12px;
+  border: 2px solid var(--ink);
+  background: var(--surface);
+  box-shadow: var(--drop), var(--bevel);
+  font-size: 14px;
+  pointer-events: none;
+}
+.tooltip p { margin: 6px 0; }
+.tip-head { display: flex; align-items: center; gap: 10px; }
+.tip-head .tag { margin-left: auto; align-self: flex-start; }
+.tip-title { font-size: 18px; font-weight: 700; }
+.tip-latin, .tip-fact { color: var(--text-dim); }
+.tip-latin { font-size: 13px; }
+.tip-stats { margin: 0 0 8px; padding-left: 18px; }
+.tip-stats b { color: var(--gold); }
+.tip-price { display: flex; align-items: center; gap: 6px; color: var(--gold); font-weight: 600; }
+.owned-mark { color: var(--green); }
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 6px;
+  border: 2px solid var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.tag-day { background: #ffe9a6; color: #4a3500; }
+.tag-night { background: #c8d0ff; color: #1d2559; }
+
+/* Notes along the bottom edge */
+.notes {
+  position: fixed;
+  left: 50%;
+  bottom: 14px;
+  z-index: 50;
+  display: grid;
+  gap: 8px;
+  width: min(440px, calc(100vw - 24px));
+  translate: -50% 0;
+  pointer-events: none;
+}
+.toast {
+  display: block;
+  padding: 10px 14px;
+  border: 2px solid var(--ink);
+  background: var(--surface);
+  box-shadow: var(--drop), var(--bevel);
+  font-size: 14px;
+  text-align: center;
+  animation: note-in 0.24s steps(4);
+}
+.toast .px-icon { margin-right: 6px; }
+.toast small { display: block; margin-top: 4px; color: var(--text-dim); }
+@keyframes note-in { from { transform: translateY(12px); opacity: 0; } }
+
+/* Phones: the cove, then the store, then the aviary */
+@media (max-width: 900px) {
+  body { height: auto; overflow: auto; }
+  .game { display: flex; flex-direction: column; height: auto; }
+  .cove { order: 1; height: 80vh; min-height: 520px; }
+  .store { order: 2; border-top: 2px solid var(--ink); }
+  .aviary-panel { order: 3; height: 80vh; border-inline: 0; border-top: 2px solid var(--ink); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kingfisher Cove</title>
+  <meta name="description" content="A pixel-art bird sanctuary incremental game: gather seeds, attract birds, and catch the Kingfisher for rare feathers.">
+  <link rel="icon" href="data:,">
+  <link rel="preload" href="fonts/PixelifySans-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/scene.css">
+  <link rel="stylesheet" href="css/aviary.css">
+  <link rel="stylesheet" href="css/shop.css">
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+  <main class="game">
+    <section class="cove" id="scene" aria-label="The cove">
+      <canvas class="pixel-canvas" id="cove-canvas" aria-hidden="true"></canvas>
+      <button class="hit" id="sunflower" type="button" aria-label="Shake the sunflower for seeds"></button>
+      <button class="hit" id="kingfisher" type="button" aria-label="Catch the Kingfisher" hidden></button>
+
+      <header class="cove-card">
+        <h1 class="brand"><span class="brand-logo" id="brand-logo"></span>Kingfisher Cove</h1>
+        <div class="seed-count" id="seed-count">0</div>
+        <div class="seed-rate">seeds · <span id="seed-rate">0</span> per second</div>
+        <div class="cove-status">
+          <span class="chip" id="feather-pill" title="Feathers: rare, and only the Kingfisher brings them">
+            <img class="px-icon" data-icon="feather" width="24" height="24" alt="">
+            <span id="feather-count">0</span><span class="visually-hidden"> feathers</span>
+          </span>
+          <span class="chip clock" title="Day birds rest at night; night birds rest by day">
+            <img class="px-icon" id="clock-icon" width="24" height="24" alt="">
+            <span id="clock-label">Day</span>
+            <span id="clock-time">1:30</span>
+            <span class="clock-bar"><span id="clock-fill"></span></span>
+          </span>
+        </div>
+      </header>
+      <p class="loading" id="loading">Opening the cove…</p>
+    </section>
+
+    <section class="aviary-panel" aria-label="Aviary">
+      <div class="panel-bar">
+        <button type="button" class="px-button" data-menu="stats" aria-pressed="false">Stats</button>
+        <div class="ticker"><span id="news"></span></div>
+        <button type="button" class="px-button" data-menu="options" aria-pressed="false">Options</button>
+      </div>
+      <div class="aviary-body">
+        <div class="aviary" id="aviary">
+          <div class="aviary-stage">
+            <canvas class="pixel-canvas" id="aviary-canvas" aria-hidden="true"></canvas>
+            <div class="aviary-labels" id="aviary-labels"></div>
+          </div>
+          <p class="aviary-empty">Your aviary is empty. Attract birds from the store and they will settle here.</p>
+        </div>
+        <div class="menu-panel" id="menu-panel" hidden>
+          <button type="button" class="px-button menu-close" id="menu-close" aria-label="Close">×</button>
+          <div id="menu-content"></div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="store" aria-label="Store">
+      <h2 class="store-title">Store</h2>
+      <section class="store-section">
+        <h3 class="section-label">Upgrades</h3>
+        <div class="upgrade-grid" id="upgrade-grid" aria-label="Upgrades" data-empty="Upgrades appear here as your cove grows."></div>
+      </section>
+      <section class="store-section">
+        <h3 class="section-label"><img class="px-icon" data-icon="feather" width="24" height="24" alt="">Feather upgrades</h3>
+        <div class="upgrade-grid" id="feather-grid" aria-label="Feather upgrades"></div>
+      </section>
+      <section class="store-section">
+        <div class="section-head">
+          <h3 class="section-label">Birds</h3>
+          <div class="buy-toggle" role="group" aria-label="How many birds to buy at once">
+            <button type="button" data-amount="1" aria-pressed="true">×1</button>
+            <button type="button" data-amount="10" aria-pressed="false">×10</button>
+            <button type="button" data-amount="100" aria-pressed="false">×100</button>
+          </div>
+        </div>
+        <div class="bird-list" id="bird-list"></div>
+      </section>
+    </aside>
+  </main>
+
+  <div class="tooltip" id="tooltip" role="tooltip" hidden></div>
+  <div class="notes" id="toasts" role="status" aria-live="polite"></div>
+</body>
+</html>
