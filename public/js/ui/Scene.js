@@ -1,6 +1,6 @@
 import { mix } from '../pixel/color.js';
 import { birdSprites, tinyFlyerFrames } from '../pixel/birds.js';
-import { iconImg } from '../pixel/icons.js';
+import { iconCanvas, iconImg } from '../pixel/icons.js';
 import { branchSprite, cloudSprites, coveBackdrop, moonSprite, sunFrames } from '../pixel/scenery.js';
 import { SUNFLOWER, rayFrames, sunflowerFrames } from '../pixel/sunflower.js';
 import { formatNumber } from '../utils/format.js';
@@ -27,6 +27,8 @@ export class Scene {
     this.ctx = this.canvas.getContext('2d');
     this.sunflowerButton = document.getElementById('sunflower');
     this.kingfisherButton = document.getElementById('kingfisher');
+    this.goldenButton = document.getElementById('golden-seed');
+    this.comboBadge = document.getElementById('combo');
     this.featherCounter = document.getElementById('feather-pill');
     this.particles = new ParticleField();
     this.orbitBird = game.birds[0]; // the first bird circles the sunflower, like Cookie Clicker's cursors
@@ -41,8 +43,11 @@ export class Scene {
       branch: branchSprite(),
       kingfisher: birdSprites(game.kingfisher.def.plumage),
       orbiter: tinyFlyerFrames(this.orbitBird.plumage),
+      golden: iconCanvas('golden-seed'),
+      goldShine: rayFrames(13, { beams: 10, color: '#ffe680', steps: 8 }),
     };
     this.kingfisher = { state: 'away', time: 0 };
+    this.golden = { state: 'away', time: 0, x: 0, y: 0 };
     this.night = game.isDay() ? 0 : 1;
     this.orbitTurn = 0;
     this.pressedAt = -Infinity;
@@ -50,6 +55,18 @@ export class Scene {
 
     this.sunflowerButton.addEventListener('click', (event) => this.#shakeSunflower(event));
     this.kingfisherButton.addEventListener('click', () => this.#catchKingfisher());
+    this.goldenButton.addEventListener('click', () => this.#catchGolden());
+    game.addEventListener('goldenarrive', () => {
+      const { width, river } = this.size;
+      const x = Math.round(width * (0.12 + Math.random() * 0.76));
+      const y = Math.round(river * 0.35 + Math.random() * (river * 0.65 - 22));
+      this.golden = { state: 'shown', time: 0, x, y };
+      this.goldenButton.hidden = false;
+    });
+    game.addEventListener('goldenleave', () => {
+      this.golden = { ...this.golden, state: 'fading', time: 0 };
+      this.goldenButton.hidden = true;
+    });
     game.addEventListener('kingfisherarrive', () => {
       this.kingfisher = { state: 'arriving', time: 0 };
       this.kingfisherButton.hidden = false;
@@ -72,7 +89,9 @@ export class Scene {
 
   /** Slow-changing state for the page's styles. */
   update() {
-    document.body.classList.toggle('is-night', !this.game.isDay());
+    const { game } = this;
+    document.body.classList.toggle('is-night', !game.isDay());
+    if (!game.progress('combo')) this.comboBadge.hidden = true;
   }
 
   /** Every frame: repaint the whole cove. */
@@ -99,6 +118,7 @@ export class Scene {
     this.#drawOrbit(dt, t);
     ctx.drawImage(this.art.branch, width - this.art.branch.width + 3, river - 6);
     this.#drawKingfisher(now, dt);
+    this.#drawGolden(now, dt);
     this.#drawRiver(t);
     this.particles.draw(ctx, 'front');
   }
@@ -126,6 +146,10 @@ export class Scene {
       top: `${(this.size.headY - reach) * SCALE}px`,
       width: `${reach * 2 * SCALE}px`,
       height: `${reach * 2 * SCALE}px`,
+    });
+    Object.assign(this.comboBadge.style, {
+      left: `${this.size.headX * SCALE}px`,
+      top: `${(this.size.headY - reach - 4) * SCALE}px`,
     });
   }
 
@@ -305,6 +329,62 @@ export class Scene {
     this.particles.burst(x, y, 'seed', 8, { speed: 70, gravity: 220 });
     this.particles.burst(x, y, 'petal', 4, { speed: 55, gravity: 160, life: 1.1 });
     this.#floater(`+${formatNumber(gained)}`, x * SCALE + (Math.random() - 0.5) * 24, y * SCALE);
+    this.#showCombo();
+  }
+
+  /** The combo counter over the sunflower; it pops every 10 shakes, when the bonus steps up. */
+  #showCombo() {
+    const { game } = this;
+    const count = game.progress('combo');
+    if (count < 2) return;
+    const multiplier = game.comboMultiplier();
+    this.comboBadge.hidden = false;
+    this.comboBadge.innerHTML = `<b>${count}</b> combo${multiplier > 1 ? ` <span>×${multiplier.toFixed(1)}</span>` : ''}`;
+    if (count % 10 === 0) {
+      this.comboBadge.animate([{ transform: 'translateX(-50%) scale(1.4)' }, { transform: 'translateX(-50%) scale(1)' }], { duration: 300, easing: 'steps(3)' });
+    }
+  }
+
+  /** A golden seed glints and bobs where it landed, then fades if nobody catches it. */
+  #drawGolden(now, dt) {
+    const golden = this.golden;
+    if (golden.state === 'away') return;
+    golden.time += dt;
+    const alpha = golden.state === 'fading' ? 1 - golden.time / 0.35 : Math.min(1, golden.time / 0.2);
+    if (alpha <= 0) {
+      golden.state = 'away';
+      return;
+    }
+    const { ctx } = this;
+    const { golden: seed, goldShine } = this.art;
+    const y = golden.y + Math.round(Math.sin(golden.time * 4) * 1.5);
+    const shine = goldShine[Math.floor(now / 80) % goldShine.length];
+    ctx.globalAlpha = alpha;
+    ctx.drawImage(shine, golden.x - shine.width / 2, y - shine.height / 2);
+    ctx.drawImage(seed, golden.x - seed.width / 2, y - seed.height / 2);
+    ctx.globalAlpha = 1;
+    if (golden.state !== 'shown') return;
+    if (Math.random() < dt * 6) this.particles.burst(golden.x + (Math.random() - 0.5) * 16, y + (Math.random() - 0.5) * 16, 'glint', 1, { speed: 4, gravity: -6, life: 0.7 });
+    Object.assign(this.goldenButton.style, {
+      left: `${(golden.x - 9) * SCALE}px`,
+      top: `${(y - 9) * SCALE}px`,
+      width: `${18 * SCALE}px`,
+      height: `${18 * SCALE}px`,
+    });
+  }
+
+  #catchGolden() {
+    const outcome = this.game.catchGoldenSeed();
+    if (!outcome) return;
+    const box = this.goldenButton.getBoundingClientRect();
+    const { x, y } = this.golden;
+    this.golden = { ...this.golden, state: 'fading', time: 0 };
+    this.goldenButton.hidden = true;
+    this.particles.burst(x, y, 'glint', 18, { speed: 60, gravity: 30 });
+    this.particles.burst(x, y, 'seed', 10, { speed: 65, gravity: 200 });
+    if (outcome.seeds) this.#floater(`+${formatNumber(outcome.seeds)}`, x * SCALE, y * SCALE);
+    if (outcome.feathers) this.#flyFeathers(box, outcome.feathers);
+    toast(`${iconImg('golden-seed')} <b>${outcome.boon.name}!</b> ${outcome.boon.description}`);
   }
 
   #catchKingfisher() {

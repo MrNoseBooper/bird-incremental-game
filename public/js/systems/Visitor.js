@@ -1,9 +1,14 @@
-/** Schedules the Kingfisher's visits to the river and pays out feathers when you catch it. */
-export class KingfisherVisitor {
-  constructor(def, now, random = Math.random) {
+/**
+ * Schedules something that turns up now and then and leaves if nobody catches it in time:
+ * the Kingfisher, or a golden seed. `interval` and `stay` name the stats that stretch its timings.
+ */
+export class Visitor {
+  constructor(def, now, { interval, stay, random = Math.random }) {
     this.def = def;
+    this.intervalStat = interval;
+    this.stayStat = stay;
     this.random = random;
-    this.leavesAt = null; // set while the Kingfisher is perched
+    this.leavesAt = null; // set while it's here
     this.nextVisitAt = now + def.first_visit_seconds * 1000;
   }
 
@@ -18,22 +23,22 @@ export class KingfisherVisitor {
       return 'leave';
     }
     if (!this.isVisiting && now >= this.nextVisitAt) {
-      this.leavesAt = now + this.def.stay_seconds * stats.kingfisher_stay * 1000;
+      this.leavesAt = now + this.def.stay_seconds * stats[this.stayStat] * 1000;
       return 'arrive';
     }
     return null;
   }
 
-  /** Returns the feathers earned, or 0 if there was nothing to catch. */
+  /** True if there was something to catch. */
   catch(now, stats) {
-    if (!this.isVisiting) return 0;
+    if (!this.isVisiting) return false;
     this.#scheduleNext(now, stats);
-    return this.def.feathers_per_catch + stats.kingfisher_feathers;
+    return true;
   }
 
   #scheduleNext(now, stats) {
     const { min_interval_seconds: min, max_interval_seconds: max } = this.def;
     this.leavesAt = null;
-    this.nextVisitAt = now + (min + (max - min) * this.random()) * stats.kingfisher_interval * 1000;
+    this.nextVisitAt = now + (min + (max - min) * this.random()) * stats[this.intervalStat] * 1000;
   }
 }

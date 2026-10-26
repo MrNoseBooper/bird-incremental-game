@@ -88,6 +88,24 @@ button { font: inherit; color: inherit; }
 .px-button.danger { background: #b13e53; }
 .px-button.danger:hover { background: #c9505f; }
 
+/* "+N" seeds rising from wherever they were earned, in pixel steps */
+.floater {
+  position: absolute;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  translate: -50% -50%;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  text-shadow: 2px 2px 0 var(--ink);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: float-up 0.9s steps(9) forwards;
+}
+@keyframes float-up { to { transform: translateY(-64px); opacity: 0; } }
+
 /* Tooltip */
 .tooltip {
   position: fixed;

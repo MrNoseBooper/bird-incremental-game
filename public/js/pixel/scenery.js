@@ -103,6 +103,32 @@ const HABITATS = {
       return Math.floor(x / 9) % 2 ? '#8f4f2c' : '#9a5833';
     };
   },
+  coast(w, h, rnd) {
+    const cliff = column(w, (x) => h - 9 + Math.round(Math.sin(x * 0.2) * 1.5 + Math.sin(x * 0.07)));
+    return (x, y) => {
+      if (y === cliff[x]) return x % 6 === 2 && rnd() < 0.6 ? '#ff8fb1' : '#6cbf4a'; // turf dotted with sea pinks
+      if (y > cliff[x]) {
+        if (y < cliff[x] + 3) return rnd() < 0.3 ? '#5aa33d' : '#4f9636';
+        return rnd() < 0.3 ? '#7d7466' : '#8f8676'; // cliff rock
+      }
+      if (y === 14) return '#7fc4e8';
+      if (y > 14) return (x * 3 + y * 7) % 23 === 0 ? '#e8f6ff' : '#3d8fc7'; // sea with whitecaps
+      return bands(['#a9dbf5', '#bfe4f8', '#d6eefb'], x, y, 0, 14);
+    };
+  },
+  tundra(w, h, rnd) {
+    const ridge = column(w, (x) => 8 + Math.round(Math.abs(Math.sin(x * 0.08 + 1)) * 6));
+    const snowline = column(w, (x) => h - 8 + Math.round(Math.sin(x * 0.15) * 1.2));
+    return (x, y) => {
+      if (y === snowline[x]) return '#ffffff';
+      if (y > snowline[x]) return rnd() < 0.15 ? '#d8e6f2' : '#eef5fb'; // snowfield
+      if (y >= ridge[x]) {
+        if (y < ridge[x] + 2) return '#f4f8fc'; // snowy peaks
+        return (x + y) % 5 === 0 ? '#8c9db0' : '#a7b6c6';
+      }
+      return bands(['#b9d4ea', '#cde0f0', '#e0ecf6'], x, y, 0, h - 8);
+    };
+  },
   rainforest(w, h, rnd) {
     const vines = column(w, () => (rnd() < 0.08 ? 6 + Math.floor(rnd() * 12) : 0));
     const canopy = column(w, (x) => 5 + Math.round(Math.sin(x * 0.35) * 2 + Math.sin(x * 0.09) * 2));

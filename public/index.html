@@ -19,6 +19,8 @@
       <canvas class="pixel-canvas" id="cove-canvas" aria-hidden="true"></canvas>
       <button class="hit" id="sunflower" type="button" aria-label="Shake the sunflower for seeds"></button>
       <button class="hit" id="kingfisher" type="button" aria-label="Catch the Kingfisher" hidden></button>
+      <button class="hit" id="golden-seed" type="button" aria-label="Catch the golden seed" hidden></button>
+      <div class="combo-badge" id="combo" hidden></div>
 
       <header class="cove-card">
         <h1 class="brand"><span class="brand-logo" id="brand-logo"></span>Kingfisher Cove</h1>
@@ -36,6 +38,7 @@
             <span class="clock-bar"><span id="clock-fill"></span></span>
           </span>
         </div>
+        <div class="buffs" id="buffs"></div>
       </header>
       <p class="loading" id="loading">Opening the cove…</p>
     </section>
@@ -46,6 +49,7 @@
         <div class="ticker"><span id="news"></span></div>
         <button type="button" class="px-button" data-menu="options" aria-pressed="false">Options</button>
       </div>
+      <div class="tasks" id="tasks" aria-label="Field tasks"></div>
       <div class="aviary-body">
         <div class="aviary" id="aviary">
           <div class="aviary-stage">

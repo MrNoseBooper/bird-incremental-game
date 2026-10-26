@@ -27,6 +27,8 @@ class Habitat(StrEnum):
     MEADOW = "meadow"
     BARN = "barn"
     RAINFOREST = "rainforest"
+    COAST = "coast"
+    TUNDRA = "tundra"
 
 
 @dataclass(frozen=True, kw_only=True)

@@ -1,23 +1,130 @@
 import { PixelGrid } from './raster.js';
 
 const O = '#1a1c2c';
+const SEED_ROWS = [
+  '.....oo.....',
+  '....odlo....',
+  '...odldlo...',
+  '..oddldldo..',
+  '..oddldldo..',
+  '..oddldldo..',
+  '..oddldldo..',
+  '..oddldldo..',
+  '...odldlo...',
+  '...oddddo...',
+  '....oooo....',
+  '............',
+];
 
 /** Hand-drawn 12×12 icons: one string per row, characters looked up in each icon's palette. */
 export const ICONS = {
   seed: {
     palette: { o: O, d: '#4a4038', l: '#ece5d4' },
+    rows: SEED_ROWS,
+  },
+  'golden-seed': {
+    palette: { o: '#7a4a00', d: '#ffc11f', l: '#fff6c4' },
+    rows: SEED_ROWS,
+  },
+  bolt: {
+    palette: { o: O, y: '#ffcd34', w: '#fff3a0' },
+    rows: [
+      '......oooo..',
+      '.....oywwo..',
+      '....oywwo...',
+      '...oywwo....',
+      '..oywwooooo.',
+      '.oyywwwwwwo.',
+      '.ooooowwyo..',
+      '....owwyo...',
+      '...owwyo....',
+      '..owyyo.....',
+      '..oyyo......',
+      '..ooo.......',
+    ],
+  },
+  scroll: {
+    palette: { o: O, p: '#f4e4bc', s: '#d8c08a', l: '#566c86' },
+    rows: [
+      '.oooooooooo.',
+      'opppppppppso',
+      'oplllllpppso',
+      'opppppppppso',
+      'opllllllppso',
+      'opppppppppso',
+      'oplllllpppso',
+      'opppppppppso',
+      'opllllppppso',
+      'opppppppppso',
+      'osssssssssso',
+      '.oooooooooo.',
+    ],
+  },
+  tag: {
+    palette: { o: O, t: '#ef7d57', w: '#f4f4f4', d: '#b13e53' },
+    rows: [
+      '............',
+      '....oooooooo',
+      '...otttttddo',
+      '..ottttttddo',
+      '.otwwttttddo',
+      'otwwwttttddo',
+      '.otwwttttddo',
+      '..ottttttddo',
+      '...otttttddo',
+      '....oooooooo',
+      '............',
+      '............',
+    ],
+  },
+  clover: {
+    palette: { o: O, g: '#38b764', l: '#a7f070', s: '#257179' },
+    rows: [
+      '..ooo..ooo..',
+      '.olggo.olggo',
+      '.ogggooogggo',
+      '..oggggggo..',
+      '.ogggooogggo',
+      '.olggo.olggo',
+      '..ooo.s.ooo.',
+      '......s.....',
+      '.......s....',
+      '........s...',
+      '............',
+      '............',
+    ],
+  },
+  star: {
+    palette: { o: O, y: '#ffcd34', w: '#fff3a0', d: '#e8a33d' },
     rows: [
       '.....oo.....',
-      '....odlo....',
-      '...odldlo...',
-      '..oddldldo..',
-      '..oddldldo..',
-      '..oddldldo..',
-      '..oddldldo..',
-      '..oddldldo..',
-      '...odldlo...',
-      '...oddddo...',
-      '....oooo....',
+      '....oyyo....',
+      '....oywo....',
+      'ooooowwooooo',
+      'oyyywwwwyyyo',
+      '.oyywwwwyyo.',
+      '..oyywwyyo..',
+      '...oyyyyo...',
+      '..oyyddyyo..',
+      '..oydoodyo..',
+      '.oydo..odyo.',
+      '.ooo....ooo.',
+    ],
+  },
+  crown: {
+    palette: { o: O, y: '#ffcd34', w: '#fff3a0', d: '#e8a33d', b: '#41a6f6', c: '#73eff7' },
+    rows: [
+      '............',
+      '............',
+      '.o...oo...o.',
+      'oyo.oyyo.oyo',
+      'oyyoyyyyoyyo',
+      'oyyyyyyyyyyo',
+      'oywyybcyywyo',
+      'oyyyybbyyyyo',
+      'oddddddddddo',
+      '.oooooooooo.',
+      '............',
       '............',
     ],
   },
@@ -278,13 +385,19 @@ export const ICONS = {
   },
 };
 
+const canvases = new Map();
 const urls = new Map();
 
-/** A data: URL for an icon; unknown names fall back to the sparkle so a typo never breaks the page. */
-export function iconUrl(name) {
+/** An icon as a 12×12 canvas; unknown names fall back to the sparkle so a typo never breaks the page. */
+export function iconCanvas(name) {
   const icon = ICONS[name] ?? ICONS.sparkle;
-  if (!urls.has(icon)) urls.set(icon, PixelGrid.fromRows(icon.rows, icon.palette).toCanvas().toDataURL());
-  return urls.get(icon);
+  if (!canvases.has(icon)) canvases.set(icon, PixelGrid.fromRows(icon.rows, icon.palette).toCanvas());
+  return canvases.get(icon);
+}
+
+export function iconUrl(name) {
+  if (!urls.has(name)) urls.set(name, iconCanvas(name).toDataURL());
+  return urls.get(name);
 }
 
 export function iconImg(name, scale = 2, className = 'px-icon') {

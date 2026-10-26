@@ -29,7 +29,40 @@
   text-align: center;
 }
 
+/* Field tasks: three cards with progress bars */
+.tasks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 2px solid var(--ink);
+  background: var(--bg);
+}
+.task {
+  display: grid;
+  gap: 4px;
+  padding: 6px 8px;
+  border: 2px solid var(--ink);
+  background: var(--raised);
+  box-shadow: var(--bevel);
+  font-size: 13px;
+}
+.task-text { line-height: 1.2; }
+.task-bar { height: 6px; border: 2px solid var(--ink); background: var(--bg); }
+.task-bar > span { display: block; width: 0; height: 100%; background: var(--green); }
+.task-foot { display: flex; align-items: center; justify-content: space-between; color: var(--text-dim); }
+.task-swap {
+  padding: 0 6px;
+  border: 2px solid var(--ink);
+  background: var(--surface);
+  color: var(--text-dim);
+  font-size: 12px;
+  cursor: pointer;
+}
+.task-swap:hover { color: var(--text); background: var(--raised-hover); }
+
 .aviary-body { position: relative; flex: 1; min-height: 0; }
+#aviary-canvas { cursor: pointer; }
 .aviary { height: 100%; overflow-x: hidden; overflow-y: auto; }
 .aviary-stage { position: relative; }
 .aviary-labels { position: absolute; inset: 0; pointer-events: none; }

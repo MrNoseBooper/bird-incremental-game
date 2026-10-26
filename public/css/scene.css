@@ -18,7 +18,24 @@
   -webkit-tap-highlight-color: transparent;
 }
 .hit:focus-visible { outline: 2px dashed var(--gold); outline-offset: 0; }
-#sunflower { border-radius: 50%; }
+#sunflower, #golden-seed { border-radius: 50%; }
+
+/* The running combo, hovering over the sunflower */
+.combo-badge {
+  position: absolute;
+  z-index: 4;
+  padding: 2px 8px 3px;
+  transform: translateX(-50%);
+  border: 2px solid var(--ink);
+  background: rgb(26 28 44 / 0.85);
+  box-shadow: 0 3px 0 rgb(0 0 0 / 0.3);
+  color: var(--text-dim);
+  font-size: 14px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.combo-badge b { color: #fff; font-size: 18px; }
+.combo-badge span { color: var(--gold); font-weight: 700; }
 
 .cove-card {
   position: absolute;
@@ -72,20 +89,23 @@
 #clock-fill { display: block; width: 0; height: 100%; background: var(--gold); }
 #clock-time { color: var(--text-dim); font-variant-numeric: tabular-nums; }
 
-/* "+N" when the sunflower is shaken: moves in pixel steps */
-.floater {
-  position: absolute;
-  z-index: 4;
-  translate: -50% -50%;
-  color: #fff;
-  font-size: 22px;
+/* Golden-seed boosts that are running, each counting down */
+.buffs { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 8px; }
+.buffs:empty { display: none; }
+.buff {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 8px 2px 4px;
+  border: 2px solid var(--ink);
+  background: #6b4a00;
+  color: var(--gold);
+  font-size: 13px;
   font-weight: 700;
-  text-shadow: 2px 2px 0 var(--ink);
-  white-space: nowrap;
-  pointer-events: none;
-  animation: float-up 0.9s steps(9) forwards;
+  animation: buff-pulse 1s steps(2) infinite;
 }
-@keyframes float-up { to { transform: translateY(-64px); opacity: 0; } }
+.buff .time { color: #fff; font-variant-numeric: tabular-nums; }
+@keyframes buff-pulse { 50% { background: #8a6000; } }
 
 .flying-feather {
   position: fixed;

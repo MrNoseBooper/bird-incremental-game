@@ -1,10 +1,14 @@
 import { birdSprites } from '../pixel/birds.js';
+import { iconImg } from '../pixel/icons.js';
 import { ROW_HEIGHT, habitatScene } from '../pixel/scenery.js';
+import { formatNumber } from '../utils/format.js';
 import { BirdActor } from './BirdActor.js';
 
 const SCALE = 3; // screen pixels per art pixel
 const GROUND = ROW_HEIGHT - 5; // where birds stand, in art pixels from the top of their strip
 const MAX_BIRDS = 10; // per strip; more would just be a crowd
+const PET_REACH = 10; // art pixels either side of a bird that still count as petting it
+const PET_COOLDOWN_MS = 400; // per bird, so one can't be petted twice in a blink
 const REDUCED_MOTION = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 
 /** The middle panel: a pixel-art habitat strip for every species you own, with its birds living in it. */
@@ -20,6 +24,7 @@ export class Aviary {
     this.night = game.isDay() ? 0 : 1;
     this.#resize(); // measure now: the first frame runs before ResizeObserver reports
     new ResizeObserver(() => this.#resize()).observe(this.el);
+    this.canvas.addEventListener('click', (event) => this.#pet(event));
   }
 
   /** A few times a second: strips for newly owned species, and birds for newly bought ones. */
@@ -63,6 +68,28 @@ export class Aviary {
       ctx.fillRect(0, top + ROW_HEIGHT - 1, this.width, 1);
       ctx.restore();
     });
+  }
+
+  /** Clicking a bird pets it: it hops, and drops a few seconds' worth of its foraging. */
+  #pet(event) {
+    const box = this.canvas.getBoundingClientRect();
+    const x = (event.clientX - box.left) / SCALE;
+    const y = (event.clientY - box.top) / SCALE;
+    const row = this.rows[Math.floor(y / ROW_HEIGHT)];
+    const nearest = row?.actors.reduce((best, actor) => (
+      Math.abs(actor.x - x) < Math.abs((best?.x ?? Infinity) - x) ? actor : best), null);
+    if (!nearest || Math.abs(nearest.x - x) > PET_REACH) return;
+    const now = performance.now();
+    if (now - (nearest.pettedAt ?? -Infinity) < PET_COOLDOWN_MS) return;
+    nearest.pettedAt = now;
+    nearest.poke();
+    const gained = this.game.petBird(row.bird.id);
+    const floater = document.createElement('span');
+    floater.className = 'floater';
+    floater.innerHTML = `${iconImg('heart', 1)} +${formatNumber(gained)}`;
+    Object.assign(floater.style, { left: `${event.clientX - box.left}px`, top: `${event.clientY - box.top}px` });
+    floater.addEventListener('animationend', () => floater.remove());
+    this.canvas.parentElement.append(floater);
   }
 
   #resize() {

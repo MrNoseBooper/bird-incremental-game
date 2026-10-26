@@ -7,6 +7,7 @@ import { Menu } from './ui/Menu.js';
 import { NewsTicker } from './ui/NewsTicker.js';
 import { Scene } from './ui/Scene.js';
 import { Shop } from './ui/Shop.js';
+import { TaskList } from './ui/TaskList.js';
 import { toast } from './ui/toast.js';
 import { formatNumber } from './utils/format.js';
 
@@ -32,7 +33,7 @@ async function start() {
   const scene = new Scene(game);
   const aviary = new Aviary(game);
   const ticker = new NewsTicker(game, content.news);
-  const panels = [scene, aviary, new Shop(game), new Menu(game, {
+  const panels = [scene, aviary, new Shop(game), new TaskList(game), new Menu(game, {
     onReset() {
       if (!confirm('Release every bird and start the cove from scratch? This cannot be undone.')) return;
       saves.wipe();

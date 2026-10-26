@@ -1,3 +1,10 @@
+/** Applies stat effects ({ stat, op: 'mul' | 'add', value }) to a stats object, in place. */
+export function applyEffects(stats, effects) {
+  for (const { stat, op, value } of effects) {
+    stats[stat] = op === 'mul' ? (stats[stat] ?? 1) * value : (stats[stat] ?? 0) + value;
+  }
+}
+
 /** A one-time purchase that changes the game's stats. */
 export class Upgrade {
   constructor(def) {
@@ -17,8 +24,6 @@ export class Upgrade {
   }
 
   applyTo(stats) {
-    for (const { stat, op, value } of this.effects) {
-      stats[stat] = op === 'mul' ? (stats[stat] ?? 1) * value : (stats[stat] ?? 0) + value;
-    }
+    applyEffects(stats, this.effects);
   }
 }

@@ -39,6 +39,11 @@ export class BirdActor {
     else if (this.time >= this.duration) this.#next();
   }
 
+  /** The player petted this bird: if it's awake and on the ground, it hops for joy. */
+  poke() {
+    if (this.state !== 'sleep' && !this.airborne) this.#enter('hop');
+  }
+
   /** What to draw: which animation, which frame of it, where, and which way the bird faces. */
   get pose() {
     const t = this.time;

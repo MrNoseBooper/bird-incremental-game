@@ -21,7 +21,12 @@ const SHAPES = {
     [[0, 0, '#ffffff']],
     [[0, 0, '#ffffff'], [-1, 0, '#73eff7'], [1, 0, '#73eff7'], [0, -1, '#73eff7'], [0, 1, '#73eff7']],
   ],
+  glint: [
+    [[0, 0, '#fff6c4']],
+    [[0, 0, '#fff6c4'], [-1, 0, '#ffcd34'], [1, 0, '#ffcd34'], [0, -1, '#ffcd34'], [0, 1, '#ffcd34']],
+  ],
 };
+const TWINKLES = new Set(['sparkle', 'glint']); // big when fresh, shrinking to a dot as they fade
 
 /** Pixel particles for the cove: seed rain (back layer), click bursts, splashes and sparkles (front), fireflies. */
 export class ParticleField {
@@ -74,7 +79,7 @@ export class ParticleField {
     for (const p of this.particles) {
       if (p.rain !== (layer === 'back')) continue;
       const shapes = SHAPES[p.kind];
-      const shape = p.kind === 'sparkle'
+      const shape = TWINKLES.has(p.kind)
         ? shapes[p.age < p.life * 0.5 ? 1 : 0]
         : shapes[Math.floor(p.age * 5 + p.tumble) % shapes.length];
       ctx.globalAlpha = p.rain ? 1 : Math.min(1, (p.life - p.age) / (p.life * 0.4));

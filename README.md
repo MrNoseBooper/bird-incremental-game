@@ -4,10 +4,15 @@ A pixel-art bird-sanctuary incremental game. Shake the sunflower for **seeds**, 
 
 ## What makes it different
 
-- **Day and night.** The cove runs a 90-second day / 90-second night loop. Day birds rest at night and night birds rest by day, foraging at only 25%. A balanced flock keeps seeds flowing around the clock.
-- **The Kingfisher.** Every minute or two a Kingfisher lands on the branch over the river. Click it before it flies off and it dives for a fish, leaving you a feather. Feathers are the rare currency, and the Kingfisher is the only source.
-- **Feather upgrades bend the rules.** Wake resting birds, lure the Kingfisher more often, and more.
-- **Discovery.** Attracting a species reveals the next one. Every bird is a real species with its scientific name and a fact.
+- **Fast and busy on purpose.** Something worth clicking turns up every few seconds, and rewards land right away, so the game suits players who like quick feedback (it was tuned with ADHD players in mind).
+- **Day and night.** The cove runs a 45-second day / 45-second night loop. Day birds rest at night and night birds rest by day, foraging at only 25%. A balanced flock keeps seeds flowing around the clock.
+- **Shake combos.** Shake the sunflower quickly to build a combo; every 10 shakes in a row the bonus steps up, to double seeds at 100 (more with upgrades). Pause too long and it breaks.
+- **Golden seeds.** Every 12 to 30 seconds one glints somewhere in the cove. Catch it for a Seed Shower, a Frenzy (all birds ×5), a Shake Storm (shakes ×10) or, rarely, a feather.
+- **The Kingfisher.** Every 30 to 60 seconds it lands on the branch over the river. Catch it before it flies off and it leaves feathers, the rare currency.
+- **Field tasks.** Three short goals at a time ("Pet 8 birds", "Reach a 20-shake combo"…). Each pays out instantly and a new one takes its place; swap any you don't fancy.
+- **Pet your birds.** Click birds in the aviary: they hop and drop seeds.
+- **Feather upgrades bend the rules.** Wake resting birds, lure golden seeds and the Kingfisher more often, make birds cheaper, and more.
+- **Discovery.** 16 real species to attract, each revealing the next, with its scientific name and a fact.
 
 The layout borrows Cookie Clicker's three panels. The cove is on the left: the sunflower with turning sunbeams, sparrows orbiting it, seed rain, and a sun and moon that arc across the sky. The aviary is in the middle, with a news ticker and a habitat strip for every species you own; the birds in it walk, hop, peck, fly between spots and sleep, each move drawn as real animation frames. The store is on the right, with upgrade tiles, tooltips and Buy 1 / 10 / 100.
 
@@ -48,6 +53,8 @@ backend/
   server.py                 Flask app: /api/content, plus the frontend when running locally
   content.py                GameRules and build_content(), the JSON the frontend receives
   news.py                   news ticker headlines, some unlocked by milestones
+  events.py                 golden seed timings and the boons they grant
+  tasks.py                  the kinds of field task and their targets and rewards
   birds/                    bird types and their stats
     base.py                 Species, FlockBird, RareVisitor, Plumage, Activity, Habitat
     diurnal.py              day birds
@@ -62,10 +69,10 @@ public/                     the frontend (HTML, CSS, JS modules, no build step)
   css/                      main (layout), scene (cove), aviary, shop (store)
   js/core/                  Game (state and rules), SaveManager
   js/models/                Bird, Upgrade
-  js/systems/               DayNightCycle, KingfisherVisitor
+  js/systems/               DayNightCycle, Visitor (Kingfisher and golden seed timing), Buffs, Combo, TaskBoard
   js/pixel/                 the pixel-art painter: raster (PixelGrid), birds (every species and animation frame),
                             sunflower, scenery (habitats, sky, sun, moon, clouds), icons, colour helpers
-  js/ui/                    one class per panel: Scene + Hud (cove), Aviary + NewsTicker + Menu, Shop + Tooltip
+  js/ui/                    one class per panel: Scene + Hud (cove), Aviary + TaskList + NewsTicker + Menu, Shop + Tooltip
                             BirdActor is an aviary bird's behaviour; ParticleField draws seeds, sparkles and fireflies
   js/utils/                 number formatting
 tests/                      Python unittest and Node test files

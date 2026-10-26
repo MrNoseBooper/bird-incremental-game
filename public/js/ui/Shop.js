@@ -63,7 +63,7 @@ export class Shop {
   }
 
   #updateBirds() {
-    const { birds, rules } = this.game;
+    const { birds } = this.game;
     let teaserShown = false;
     birds.forEach((bird, i) => {
       const row = this.birdList.children[i];
@@ -77,7 +77,7 @@ export class Shop {
         row.classList.toggle('teaser', state === 'teaser');
         row.innerHTML = itemHtml(bird, state === 'revealed');
       }
-      const cost = bird.cost(rules.cost_growth, this.amount);
+      const cost = this.game.birdCost(bird, this.amount);
       const affordable = revealed && this.game.seeds >= cost;
       row.classList.toggle('affordable', affordable);
       row.setAttribute('aria-disabled', String(!affordable));
@@ -108,7 +108,7 @@ export class Shop {
   }
 
   #birdTip(row) {
-    const { birds, stats, rules } = this.game;
+    const { birds, stats } = this.game;
     const i = birds.findIndex((bird) => bird.id === row.dataset.bird);
     const bird = birds[i];
     if (row.dataset.state !== 'revealed') {
@@ -128,7 +128,7 @@ export class Shop {
         <li>Each forages <b>${formatNumber(each, 1)}</b> seeds/s while awake, ${Math.round(stats.rest_rate * 100)}% of that while resting</li>
         <li>Your ${bird.owned} together: <b>${formatNumber(now, 1)}</b> seeds/s right now</li>
       </ul>
-      <div class="tip-price">${iconImg('seed', 1)} ${formatNumber(bird.cost(rules.cost_growth, this.amount))} for ${this.amount}</div>`;
+      <div class="tip-price">${iconImg('seed', 1)} ${formatNumber(this.game.birdCost(bird, this.amount))} for ${this.amount}</div>`;
   }
 
   #upgradeTip(tile) {
